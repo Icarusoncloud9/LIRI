@@ -28,9 +28,11 @@ var spotify = "spotify-this-song";
 
 var movie = "movie-this";
 
-// Boolean loop
+// Values to store
 
-var condition;
+var song;
+
+var movie;
 
 
 
@@ -63,7 +65,42 @@ function greeting(){
 // If the "twitter" function is called...
 function twitter(){
 
+    console.log("Twitter is working!");
+
     // Paste the sample code from npm
+    var client = new Twitter({
+
+        consumer_key: 'sUwRjNCSJOvsQUngm12syFBct',
+
+        consumer_secret: '760IuzuMTtLQip8yd9TrOmc8Bs08Qxoo4DXYLZBfRkQwTSlepD',
+
+        access_token_key: '784523687626170368-qPkpiEcTGXy2NNGGDS2hLeLtgv1dSvi',
+
+        access_token_secret: 'aHGQsKBCv8JIUE5eDeoX9ZMc79dQsEWdOS4e8GH9ZB7uq',
+
+    });
+     
+    var params = {screen_name: 'nodejs'};
+
+    client.get('statuses/user_timeline', params, function(error, tweets, response) {
+
+      if (!error) {
+
+        console.log(tweets);
+
+      }
+
+    });
+
+    client.get('favorites/list', function(error, tweets, response) {
+
+      if(error) throw error;
+
+      console.log(tweets);  // The favorites. 
+
+      console.log(response);  // Raw response object. 
+
+    });
 
 }
 
@@ -71,6 +108,17 @@ function twitter(){
 function spotify(){
 
     // Paste the sample code from npm
+    spotify.search({ type: 'track', query: song }, function(err, data) {
+    if ( err ) {
+        console.log('Error occurred: ' + err);
+        return;
+
+        console.log(JSON.stringify(data, null, 2));
+    }
+ 
+    // Do something with 'data' 
+
+});
 
 }
 
@@ -78,6 +126,42 @@ function spotify(){
 function movie(){
 
     // Paste the sample code from npm
+    omdb.search(movie, function(err, movies) {
+    if(err) {
+        return console.error(err);
+    }
+ 
+    if(movies.length < 1) {
+        return console.log('No movies were found!');
+    }
+ 
+    movies.forEach(function(movie) {
+        console.log('%s (%d)', movie.title, movie.year);
+    });
+ 
+    // Saw (2004) 
+    // Saw II (2005) 
+    // Saw III (2006) 
+    // Saw IV (2007) 
+    // ... 
+});
+ 
+omdb.get({ title: 'Saw', year: 2004 }, true, function(err, movie) {
+    if(err) {
+        return console.error(err);
+    }
+ 
+    if(!movie) {
+        return console.log('Movie not found!');
+    }
+ 
+    console.log('%s (%d) %d/10', movie.title, movie.year, movie.imdb.rating);
+    console.log(movie.plot);
+ 
+    // Saw (2004) 7.6/10 
+    // Two men wake up at opposite sides of a dirty, disused bathroom, chained 
+    // by their ankles to pipes. Between them lies... 
+});
 
 }
 
@@ -154,6 +238,10 @@ inquirer.prompt([
 
         console.log("Here are your latest tweets!");
 
+        console.log("");
+
+        twitter();
+
     }
 
     // If spotify is picked
@@ -174,6 +262,8 @@ inquirer.prompt([
         }]).then(function(song) {
 
         console.log("Your spotify song is " + song.spotify)    
+
+        song = song.spotify;
 
         });
 
@@ -197,6 +287,8 @@ inquirer.prompt([
         }]).then(function(movie) {
 
         console.log("Your movie is " + movie.omdb);
+
+        movie = movie.omdb;
 
         });
     }
