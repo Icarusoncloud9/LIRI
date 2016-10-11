@@ -1,0 +1,31 @@
+{
+  "name": "liri",
+  "version": "1.0.0",
+  "description": "This is a command calling interface",
+  "main": "keys.js",
+  "dependencies": {
+    "inquirer": "^1.2.1",
+    "omdb": "^0.7.0",
+    "request": "^2.75.0",
+    "twitter": "^1.4.0",
+    "spotify": "^0.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Icarusoncloud9/Twitter-Assignment.git"
+  },
+  "keywords": [
+    "personal",
+    "assistant"
+  ],
+  "author": "Joaquin Melara",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Icarusoncloud9/Twitter-Assignment/issues"
+  },
+  "homepage": "https://github.com/Icarusoncloud9/Twitter-Assignment#readme"
+}
