@@ -28,6 +28,8 @@ var commandSpotify = "spotify-this-song";
 
 var commandMovie = "movie-this";
 
+var commandConfirm = true;
+
 
 // Take two arguments. 
 
