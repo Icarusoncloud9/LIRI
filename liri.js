@@ -39,6 +39,9 @@ var action;
 // The second will be the item that will be used for the api request, play a song, etc.
 var value;
 
+// Confirm to ask another question
+var confirm = true;
+
 // ------------------------------------------------------------------------------------------------
 // Create my functions
 // ------------------------------------------------------------------------------------------------
@@ -82,7 +85,7 @@ function getTwitter(){
 
       if (!error) {
 
-        for(var i = 0; i < 10; i++) {
+        for(var i = 0; i < 5; i++) {
 
             if (tweets[i] == null || tweets[i] == undefined) {
                 break;
@@ -90,9 +93,12 @@ function getTwitter(){
 
         // console.log(JSON.stringify(tweets[i], null, 2));
 
+        console.log(tweets[i]);
         console.log(tweets[i].text);
             
         }
+
+        checkConfirm();
 
       }
 
@@ -113,46 +119,48 @@ function getTwitter(){
 // If the "spotify" function is called...
 function getSpotify(b){
 
-    // Test to see if Spotify works
-    // console.log("Spotify works!");
+        // Test to see if Spotify works
+        // console.log("Spotify works!");
 
-    // Paste the sample code from npm
-    spotify.search({ type: 'track', query: b }, function(err, data) {
+        // Paste the sample code from npm
+        spotify.search({ type: 'track', query: b }, function(err, data) {
 
-    if ( err ) {
+        if ( err ) {
+            
+            console.log('Error occurred: ' + err);
+            
+            return;
+            
+        }
+
+        // console.log("The raw data: " + JSON.stringify(data, null, 3));
         
-        console.log('Error occurred: ' + err);
+        for(var i = 0; i < data.tracks.items.length; i++) {
+
+        // Do something with 'data' 
+        console.log("=================================================================");
+
+        console.log("Potential Song Origin ~ " + i);
         
-        return;
-        
-    }
+        for(var j = 0; j < data.tracks.items[i].artists.length; j++) {
 
-    // console.log("The raw data: " + JSON.stringify(data, null, 3));
-    
-    for(var i = 0; i < data.tracks.items.length; i++) {
+            console.log("Artist involved:   " + data.tracks.items[i].artists[j].name);
+            
+        }
 
-    // Do something with 'data' 
-    console.log("=================================================================");
+        console.log("Album Name:        " + data.tracks.items[i].album.name);
 
-    console.log("Potential Song Origin ~ " + i);
-    
-    for(var j = 0; j < data.tracks.items[i].artists.length; j++) {
+        console.log("Song Name:         " + value);
 
-        console.log("Artist involved:   " + data.tracks.items[i].artists[j].name);
-        
-    }
+        console.log("=================================================================");
 
-    console.log("Album Name:        " + data.tracks.items[i].album.name);
+        console.log("");
 
-    console.log("Song Name:         " + value);
-
-    console.log("=================================================================");
-
-    console.log("");
-
-    console.log("");
+        console.log("");
 
         }
+
+       checkConfirm();
     
     });
 
@@ -163,6 +171,8 @@ function getMovie(b){
 
     // Test to see if OMDB is working properly;
     // console.log("OMDB Works!");
+
+    checkConfirm();
 
     // Paste the sample code from npm
     omdb.search(b, function(err, movies) {
@@ -238,22 +248,53 @@ function getMovie(b){
             console.log("");
 
         });
-        
 
+          
     
     });
  
 
-
 });
- 
 
 }
 
-// ------------------------------------------------------------------------------------------------
-// Create my main code
-// ------------------------------------------------------------------------------------------------
+function checkConfirm () {
 
+    console.log("");
+
+    console.log("");
+    
+    console.log("");
+
+        inquirer.prompt([
+        
+        // Second we ask for the user's name
+        {
+
+            type: "confirm",
+
+            message: "Do you want to ask another question, " + name +"?",
+
+            name: "confirm"
+
+        }
+
+    ]).then(function (person) {
+
+        confirm = person.confirm;
+
+        if (confirm) {
+
+            // Run function without asking user for name
+            everyOtherRun();
+
+        }
+
+    });
+
+}
+
+function run() {
 
 // First we have a welcoming message for the user
 console.log("==================================================================");
@@ -381,3 +422,131 @@ inquirer.prompt([
 
 });
 
+
+}
+
+function everyOtherRun() {
+
+    console.log("");
+
+    console.log("");
+    
+    console.log("==================================================");
+    
+    console.log("");
+    
+    console.log("Hello again " + name + " !");
+    
+    console.log("");
+    
+    console.log("==================================================");
+
+    console.log("");
+
+    console.log("");
+
+    inquirer.prompt([
+    
+    {
+
+        type: "list",
+
+        message: "What command would you like to execute",
+
+        choices: [commandTweets, commandSpotify, commandMovie],
+
+        name: "command"
+
+    }
+
+]).then(function (user) {
+
+    // This is going to update the global variable action to check which if statement applies to this situation
+    action = user.command;
+
+    // If tweets are picked
+    if (action == commandTweets) {
+
+        greeting();
+
+        console.log("");
+
+        console.log(name + " Here are your latest tweets!");
+
+        console.log("");
+
+        getTwitter();
+
+    }
+
+    // If spotify is picked
+    else if (action == commandSpotify) {
+
+        greeting();
+
+        inquirer.prompt([
+
+        {
+
+            type: "input",
+
+            message: "What song would you like to look up?",
+
+            name: "songName"
+
+        }]).then(function(song) {
+
+        console.log("");
+
+        console.log(name + " Your spotify song is " + song.songName)    
+
+        console.log("");
+
+        value = song.songName;
+
+        getSpotify(song.songName);
+
+        });
+
+    } 
+
+    // If movie is picked
+    else if (action == commandMovie) {
+
+        greeting();
+
+        inquirer.prompt([
+
+        {
+
+            type: "input",
+
+            message: "What movie would you like to look up?",
+
+            name: "omdb"
+
+        }]).then(function(movie) {
+
+        console.log("");
+
+        console.log(name + " Your movie is " + movie.omdb);
+
+        console.log("");
+
+        getMovie(movie.omdb);
+
+        });
+    }
+
+});
+
+
+}
+
+// ------------------------------------------------------------------------------------------------
+// Create my main code
+// ------------------------------------------------------------------------------------------------
+
+
+
+run();
